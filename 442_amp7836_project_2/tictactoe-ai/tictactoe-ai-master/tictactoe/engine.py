@@ -50,10 +50,21 @@ class Engine:
             return min_eval, best_move
 
     def evaluate_board(self, board: Board, depth: int) -> Score:
-        if board.winner() == self.ai:
-            return board.size**2 - depth
-        elif board.winner() == self.foe:
-            return -1 * board.size**2 - depth
+        grid_state = len(board.empty_squares)
+        outcome_1 = board.size ** 2 - depth + 1
+        outcome_2 = outcome_1 * -1
+
+        if grid_state >= 4:
+            if self.ai == board.winnerHelper(winner = True):
+                return outcome_1
+            elif self.foe == board.winnerHelper(winner = True):
+                return outcome_2
+        else:
+            if self.ai == board.winnerHelper(winner = True):
+                return outcome_2
+            elif self.foe == board.winnerHelper(winner = True):
+                return outcome_1
+        
         return 0
 
     def evaluate_best_move(self, board: Board) -> Square:
