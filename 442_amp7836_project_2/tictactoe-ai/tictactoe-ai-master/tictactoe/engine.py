@@ -54,6 +54,7 @@ class Engine:
         outcome_1 = board.size ** 2 - depth + 1
         outcome_2 = outcome_1 * -1
 
+        # reversed logic for the winner
         if grid_state >= 4:
             if self.ai == board.winnerHelper(winner = True):
                 return outcome_1
