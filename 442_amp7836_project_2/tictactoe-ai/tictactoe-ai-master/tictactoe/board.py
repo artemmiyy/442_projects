@@ -193,23 +193,21 @@ class Board:
         Returns:
             bool: True if board is filled and no connection
         """
-        if len(self.empty_squares) == 0 and len(self.get_connection()) == 0:
-            return True
+        if len(self.empty_squares) == 0 and \
+           len(self.get_connection(show_board=False)) == 0:
+           return True
         return False
 
-    def winner(self) -> Optional[Symbol]:
-        """Get the winner of the match
+    def get_symbol(self, winner = False):
+        con = self.get_connection(show_board=False, winner=winner)
 
-        Returns:
-            Optional[Symbol]: Symbol of connected tiles if exists
-        """
-        connection = self.get_connection()
-        if len(connection) == 0:
-            return None
-        elif self.square_value(connection[0]) == Symbol.CIRCLE:
-            return Symbol.CIRCLE
-        else:
-            return Symbol.CROSS
+        if not len(con): return
+        elif Symbol.CIRCLE == self.square_value(con[0]): return Symbol.CIRCLE
+
+        return Symbol.CROSS
+
+    def winner(self) -> Optional[Symbol]:
+        winner = self
 
     def is_gameover(self) -> bool:
         """Check for gameover

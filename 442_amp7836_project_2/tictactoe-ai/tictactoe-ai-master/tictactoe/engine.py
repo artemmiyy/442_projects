@@ -56,14 +56,14 @@ class Engine:
 
         # reversed logic for the winner
         if grid_state >= 4:
-            if self.ai == board.winnerHelper(winner = True):
+            if self.ai == board.get_symbol(winner = True):
                 return outcome_1
-            elif self.foe == board.winnerHelper(winner = True):
+            elif self.foe == board.get_symbol(winner = True):
                 return outcome_2
         else:
-            if self.ai == board.winnerHelper(winner = True):
+            if self.ai == board.get_symbol(winner = True):
                 return outcome_2
-            elif self.foe == board.winnerHelper(winner = True):
+            elif self.foe == board.get_symbol(winner = True):
                 return outcome_1
         
         return 0
