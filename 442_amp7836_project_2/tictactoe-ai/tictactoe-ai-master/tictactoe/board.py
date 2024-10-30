@@ -208,7 +208,7 @@ class Board:
 
     def winner(self) -> Optional[Symbol]:
         winner = self.get_symbol(True)
-        if not self.final_move() and winner: return winner
+        if (not self.last_turn()) and winner: return winner
         return None
 
     def is_gameover(self) -> bool:
@@ -256,6 +256,21 @@ class Board:
             return
         self.push(square, self.turn)
         self._update()
+    
+    def last_turn(self, show_board = False):
+        con = self.get_connection(show_board = show_board)
+        eval_move = (len(con) and self.square_value(con[0]) == self.turn)
+        squares = self.empty_squares
+
+        if eval_move: return False
+        for s in squares:
+            self.push(s, self.turn)
+            if self.turn == self.get_symbol:
+                self.undo(s)
+                return True
+            self.undo(s)
+        
+        return False
 
     def print(self):
         """Represent the board in string
