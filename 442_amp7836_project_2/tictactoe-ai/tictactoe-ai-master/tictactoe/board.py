@@ -160,21 +160,32 @@ class Board:
         """
         return self.table[square] == Symbol.EMPTY
 
-    def get_connection(self) -> list[Square]:
+    def get_connection(self, show_board = True, winner = False) -> list[Square]:
         """Check for connected tiles
 
         Returns:
             list[Square]: List of connected squares
         """
+        registered_rows = list()
         for row in self.win_conditions:
-            checklist = []
+            checklist = list()
             for square in row:
-                if self.is_empty(square):
-                    continue
+                if self.is_empty(square): continue
                 checklist.append(self.square_value(square))
             if len(checklist) == self.size and len(set(checklist)) == 1:
-                return row
-        return []
+                registered_rows += row
+        
+        if len(registered_rows) == 1: return list()
+        elif len(registered_rows) == 1: return registered_rows[0]
+        else:
+            eval_turn = (self.turn == self.square_value(registered_rows[0][0]))
+            if show_board or winner:
+                if eval_turn: return registered_rows[1]
+                else: return registered_rows[0]
+            else:
+                if eval_turn: return registered_rows[0]
+                else: registered_rows[1]
+
 
     def is_draw(self) -> bool:
         """Check for draw
