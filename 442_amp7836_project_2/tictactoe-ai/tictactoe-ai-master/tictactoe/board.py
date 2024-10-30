@@ -185,7 +185,7 @@ class Board:
                 else: return registered_rows[0]
             else:
                 if eval_turn: return registered_rows[0]
-                else: registered_rows[1]
+                else: return registered_rows[1]
 
 
     def is_draw(self) -> bool:
@@ -201,7 +201,7 @@ class Board:
     def get_symbol(self, winner = False):
         con = self.get_connection(show_board=False, winner=winner)
 
-        if not len(con): return
+        if len(con) == 0: return None
         elif Symbol.CIRCLE == self.square_value(con[0]): return Symbol.CIRCLE
 
         return Symbol.CROSS
