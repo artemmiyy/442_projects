@@ -172,14 +172,14 @@ class Board:
             for square in row:
                 if self.is_empty(square): continue
                 condition.append(self.square_value(square))
-            if len(condition) == self.size and len(set(condition)) == 1:
-                registered_rows += row
+            if self.size == len(condition) and len(set(condition)) == 1:
+                registered_rows.append(row)
         
         # handles the unregistered row case
         if not len(registered_rows): return list()
         elif len(registered_rows) == 1: return registered_rows[0]
         else:
-            eval_turn = (self.turn == self.square_value(registered_rows[0][0]))
+            eval_turn = self.turn == self.square_value(registered_rows[0][0])
             if show_board or winner:
                 if eval_turn: return registered_rows[1]
                 else: return registered_rows[0]
@@ -259,13 +259,13 @@ class Board:
     
     def last_turn(self, show_board = False):
         con = self.get_connection(show_board = show_board)
-        eval_move = (len(con) and self.square_value(con[0]) == self.turn)
+        eval_move = len(con) > 0 and self.square_value(con[0]) == self.turn
         squares = self.empty_squares
 
         if eval_move: return False
         for s in squares:
             self.push(s, self.turn)
-            if self.turn == self.get_symbol:
+            if self.turn == self.get_symbol():
                 self.undo(s)
                 return True
             self.undo(s)
