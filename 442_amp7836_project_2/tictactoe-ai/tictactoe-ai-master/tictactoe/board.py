@@ -168,14 +168,15 @@ class Board:
         """
         registered_rows = list()
         for row in self.win_conditions:
-            checklist = list()
+            condition = list()
             for square in row:
                 if self.is_empty(square): continue
-                checklist.append(self.square_value(square))
-            if len(checklist) == self.size and len(set(checklist)) == 1:
+                condition.append(self.square_value(square))
+            if len(condition) == self.size and len(set(condition)) == 1:
                 registered_rows += row
         
-        if len(registered_rows) == 1: return list()
+        # handles the unregistered row case
+        if not len(registered_rows): return list()
         elif len(registered_rows) == 1: return registered_rows[0]
         else:
             eval_turn = (self.turn == self.square_value(registered_rows[0][0]))
@@ -193,9 +194,8 @@ class Board:
         Returns:
             bool: True if board is filled and no connection
         """
-        if len(self.empty_squares) == 0 and \
-           len(self.get_connection(show_board=False)) == 0:
-           return True
+        if (not len(self.get_connection(show_board=False))) \
+           and (not len(self.empty_squares)): return True
         return False
 
     def get_symbol(self, winner = False):
@@ -207,7 +207,9 @@ class Board:
         return Symbol.CROSS
 
     def winner(self) -> Optional[Symbol]:
-        winner = self
+        winner = self.get_symbol(True)
+        if not self.final_move() and winner: return winner
+        return None
 
     def is_gameover(self) -> bool:
         """Check for gameover
