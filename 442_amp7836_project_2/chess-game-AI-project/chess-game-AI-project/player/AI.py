@@ -343,7 +343,7 @@ class AI:
         }
         # possible directions for a piece to move in
         possible_directions = [(-1, -1), (-1, 0), (-1, 1), (0, -1), 
-                      (0, 1), (1, -1), (1, 0), (1, 1)]
+                               (0, 1), (1, -1), (1, 0), (1, 1)]
 
         # evaluate the board with the relative piece value
         for x in range(8):
@@ -357,6 +357,27 @@ class AI:
                         evaluation += piece_value + piece[y][x]
         
                     # evaluate the attack and defense of a piece
+                    for dx, dy in possible_directions:
+                        nx, ny = x + dx, y + dy
+                        if 0 <= nx < 8 and 0 <= ny < 8:
+                            adj_square = gametiles[ny][nx]
+                            if adj_square.pieceonTile:
+                                adj_piece = adj_square.pieceonTile.tostring()
+                                # reward attack
+                                if curr_piece.islower() != adj_piece.islower():
+                                    value += 22
+                                # reward defense
+                                else:
+                                    value += 18
+                    
+                    if (x, y) in center:
+                        if curr_piece.islower(): evaluation += center_bonus
+                        else: evaluation -= center_bonus
+                
+                # center reward
+                if (x, y) in {(4, 4), (4, 3), (3, 4), (3, 3)}:
+                    if curr_piece.islower(): value += 20
+                    else: value -= 20
 
         return evaluation
 
