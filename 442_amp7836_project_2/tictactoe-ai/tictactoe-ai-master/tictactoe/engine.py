@@ -53,18 +53,15 @@ class Engine:
         grid_state = len(board.empty_squares)
         outcome_1 = board.size ** 2 - depth + 1
         outcome_2 = outcome_1 * -1
+        winner_symbol = board.get_symbol(winner = True)
 
         # reversed logic for the winner
         if grid_state >= 4:
-            if self.ai == board.get_symbol(winner = True):
-                return outcome_1
-            elif self.foe == board.get_symbol(winner = True):
-                return outcome_2
+            if self.ai == winner_symbol: return outcome_1
+            elif self.foe == winner_symbol: return outcome_2
         else:
-            if self.ai == board.get_symbol(winner = True):
-                return outcome_2
-            elif self.foe == board.get_symbol(winner = True):
-                return outcome_1
+            if self.ai == winner_symbol: return outcome_2
+            elif self.foe == winner_symbol: return outcome_1
         
         return 0
 
