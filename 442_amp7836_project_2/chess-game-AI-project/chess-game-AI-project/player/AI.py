@@ -251,46 +251,79 @@ class AI:
 
 
     def calculateb(self,gametiles):
-        value=0
-        for x in range(8):
-            for y in range(8):
-                    if gametiles[y][x].pieceonTile.tostring()=='P':
-                        value=value-100
+        '''
+        every piece has a different value based on the state
+        of the board. The higher the value the more utility
+        we get in a current state. This may not be the most
+        effective way to approach to capture each piece's
+        utility it but I couldn't figure anything else out.
+        '''
+        king = [
+            [-3, -4, -4, -5, -5, -4, -4, -3],
+            [-3, -4, -4, -5, -5, -4, -4, -3],
+            [-3, -4, -4, -5, -5, -4, -4, -3],
+            [-3, -4, -4, -5, -5, -4, -4, -3],
+            [-2, -3, -3, -4, -4, -3, -3, -2],
+            [-1, -2, -2, -2, -2, -2, -2, -1],
+            [2, 2, 0, 0, 0, 0, 2, 2],
+            [2, 3, 1, 0, 0, 1, 3, 2]
+        ]
 
-                    if gametiles[y][x].pieceonTile.tostring()=='N':
-                        value=value-350
+        queen = [
+            [-2, -1, -1, -0.5, -0.5, -1, -1, -2],
+            [-1, 0, 0, 0, 0, 0, 0, -1],
+            [-1, 0, 0.5, 0.5, 0.5, 0.5, 0, -1],
+            [-0.5, 0, 0.5, 0.5, 0.5, 0.5, 0, -0.5],
+            [0, 0, 0.5, 0.5, 0.5, 0.5, 0, -0.5],
+            [-1, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -1],
+            [-1, 0, 0.5, 0, 0, 0, 0, -1],
+            [-2, -1, -1, -0.5, -0.5, -1, -1, -2]
+        ]
 
-                    if gametiles[y][x].pieceonTile.tostring()=='B':
-                        value=value-350
+        rook = [
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0.5, 1, 1, 1, 1, 1, 1, 0.5],
+            [-0.5, 0, 0, 0, 0, 0, 0, -0.5],
+            [-0.5, 0, 0, 0, 0, 0, 0, -0.5],
+            [-0.5, 0, 0, 0, 0, 0, 0, -0.5],
+            [-0.5, 0, 0, 0, 0, 0, 0, -0.5],
+            [-0.5, 0, 0, 0, 0, 0, 0, -0.5],
+            [0, 0, 0, 0.5, 0.5, 0, 0, 0]
+        ]
 
-                    if gametiles[y][x].pieceonTile.tostring()=='R':
-                        value=value-525
+        bishop = [
+            [-2, -1, -1, -1, -1, -1, -1, -2],
+            [-1, 0, 0, 0, 0, 0, 0, -1],
+            [-1, 0, 0.5, 1, 1, 0.5, 0, -1],
+            [-1, 0.5, 0.5, 1, 1, 0.5, 0.5, -1],
+            [-1, 0, 1, 1, 1, 1, 0, -1],
+            [-1, 1, 1, 1, 1, 1, 1, -1],
+            [-1, 0.5, 0, 0, 0, 0, 0.5, -1],
+            [-2, -1, -1, -1, -1, -1, -1, -2]
+        ]
 
-                    if gametiles[y][x].pieceonTile.tostring()=='Q':
-                        value=value-1000
+        knight = [
+            [-5, -4, -3, -3, -3, -3, -4, -5],
+            [-4, -2, 0, 0, 0, 0, -2, -4],
+            [-3, 0, 1, 1.5, 1.5, 1, 0, -3],
+            [-3, 0.5, 1.5, 2, 2, 1.5, 0.5, -3],
+            [-3, 0, 1.5, 2, 2, 1.5, 0, -3],
+            [-3, 0.5, 1, 1.5, 1.5, 1, 0.5, -3],
+            [-4, -2, 0, 0.5, 0.5, 0, -2, -4],
+            [-5, -4, -3, -3, -3, -3, -4, -5]
+        ]
 
-                    if gametiles[y][x].pieceonTile.tostring()=='K':
-                        value=value-10000
-
-                    if gametiles[y][x].pieceonTile.tostring()=='p':
-                        value=value+100
-
-                    if gametiles[y][x].pieceonTile.tostring()=='n':
-                        value=value+350
-
-                    if gametiles[y][x].pieceonTile.tostring()=='b':
-                        value=value+350
-
-                    if gametiles[y][x].pieceonTile.tostring()=='r':
-                        value=value+525
-
-                    if gametiles[y][x].pieceonTile.tostring()=='q':
-                        value=value+1000
-
-                    if gametiles[y][x].pieceonTile.tostring()=='k':
-                        value=value+10000
-
-        return value
+        pawn = [
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [5, 5, 5, 5, 5, 5, 5, 5],
+            [1, 1, 2, 3, 3, 2, 1, 1],
+            [0.5, 0.5, 1, 2.5, 2.5, 1, 0.5, 0.5],
+            [0, 0, 0, 2, 2, 0, 0, 0],
+            [0.5, -0.5, -1, 0, 0, -1, -0.5, 0.5],
+            [0.5, 1, 1, -2, -2, 1, 1, 0.5],
+            [0, 0, 0, 0, 0, 0, 0, 0]
+            ]
+        
 
 
     def move(self,gametiles,y,x,n,m):
