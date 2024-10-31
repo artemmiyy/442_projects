@@ -322,8 +322,43 @@ class AI:
             [0.5, -0.5, -1, 0, 0, -1, -0.5, 0.5],
             [0.5, 1, 1, -2, -2, 1, 1, 0.5],
             [0, 0, 0, 0, 0, 0, 0, 0]
-            ]
+        ]
         
+        # initialize the state variables
+        evaluation = 0
+        active_pieces = 0
+        black_king_position = None
+
+        # central squares hold the most significance
+        # reward for having control of the central squares
+        center = [(3, 3), (3, 4), (4, 3), (4, 4)]
+        center_bonus = 1000
+        
+        # each piece has a relative value depending on the position
+        piece_values = {
+        'P': (-100, pawn), 'N': (-350, knight), 'B': (-350, bishop),
+        'R': (-525, rook), 'Q': (-1000, queen), 'K': (-10000, king),
+        'p': (100, pawn), 'n': (350, knight), 'b': (350, bishop),
+        'r': (525, rook), 'q': (1000, queen), 'k': (10000, king)
+        }
+        # possible directions for a piece to move in
+        possible_directions = [(-1, -1), (-1, 0), (-1, 1), (0, -1), 
+                      (0, 1), (1, -1), (1, 0), (1, 1)]
+
+        # evaluate the board with the relative piece value
+        for x in range(8):
+            for y in range(8):
+                square = gametiles[y][x]
+                if square.pieceonTile:
+                    curr_piece = square.pieceonTile.tostring()
+                    active_pieces += 1
+                    if curr_piece in piece_values:
+                        piece_value, piece = piece_values[curr_piece]
+                        evaluation += piece_value + piece[y][x]
+        
+                    # evaluate the attack and defense of a piece
+
+        return evaluation
 
 
     def move(self,gametiles,y,x,n,m):
