@@ -160,33 +160,34 @@ class Board:
         """
         return self.table[square] == Symbol.EMPTY
 
-    def get_connection(self, show_board = True, winner = False) -> list[Square]:
+    def get_connection(self, show_board=True, winner=False) -> list[Square]:
         """Check for connected tiles
 
-        Returns:
-            list[Square]: List of connected squares
+            Returns:
+                list[Square]: List of connected squares
         """
-        registered_rows = list()
-        for row in self.win_conditions:
-            condition = list()
-            for square in row:
-                if self.is_empty(square): continue
-                condition.append(self.square_value(square))
-            if self.size == len(condition) and len(set(condition)) == 1:
-                registered_rows.append(row)
+        connected_rows = list()
         
-        # handles the unregistered row case
-        if not len(registered_rows): return list()
-        elif len(registered_rows) == 1: return registered_rows[0]
-        else:
-            eval_turn = self.turn == self.square_value(registered_rows[0][0])
-            if show_board or winner:
-                if eval_turn: return registered_rows[1]
-                else: return registered_rows[0]
-            else:
-                if eval_turn: return registered_rows[0]
-                else: return registered_rows[1]
+        # Collect rows where all squares have the non-empty value
+        for row in self.win_conditions:
+            values = list()
+            for square in row:
+                if not self.is_empty(square):
+                    values.append(self.square_value(square))
+            
+            if len(values) == self.size and len(set(values)) == 1:
+                connected_rows.append(row)
+        
+        # Handle cases based on the number of connected rows
+        if not connected_rows: return list()
+        if len(connected_rows) == 1: return connected_rows[0]
 
+        # Determine which row to return based on the turn
+        is_turn_match = self.turn == self.square_value(connected_rows[0][0])
+        if show_board or winner:
+            return connected_rows[1] if is_turn_match else connected_rows[0]
+        else:
+            return connected_rows[0] if is_turn_match else connected_rows[1]
 
     def is_draw(self) -> bool:
         """Check for draw
