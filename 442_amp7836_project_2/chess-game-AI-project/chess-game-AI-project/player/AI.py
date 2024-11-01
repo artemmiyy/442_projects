@@ -327,7 +327,7 @@ class AI:
         # initialize the state variables
         evaluation = 0
         active_pieces = 0
-        black_king_position = None
+        king_position = None
 
         # central squares hold the most significance
         # reward for having control of the central squares
@@ -370,6 +370,7 @@ class AI:
                                 else:
                                     value += 18
                     
+                    # center reward
                     if (x, y) in center:
                         if curr_piece.islower(): evaluation += center_bonus
                         else: evaluation -= center_bonus
@@ -378,6 +379,22 @@ class AI:
                 if (x, y) in {(4, 4), (4, 3), (3, 4), (3, 3)}:
                     if curr_piece.islower(): value += 20
                     else: value -= 20
+                
+                # get king position
+                if curr_piece.islower() and curr_piece == 'K':
+                    king_position = (x, y)
+                elif curr_piece.isupper() and curr_piece == 'k':
+                    king_position = (x, y)
+
+                # encouraging attacking squares next to king
+                if king_position != None:
+                    king_p1 = king_position[0]
+                    king_p2 = king_position[1]
+                    king_zone = max(abs(king_p1 - x), abs(king_p2 - y))
+                    
+                    if king_zone == 1:
+                        if curr_piece.islower(): evaluation += 50
+                        else: evaluation -= 50
 
         return evaluation
 
