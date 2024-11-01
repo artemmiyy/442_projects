@@ -395,6 +395,25 @@ class AI:
                     if king_zone == 1:
                         if curr_piece.islower(): evaluation += 50
                         else: evaluation -= 50
+                
+                # encouraging promotion
+                if curr_piece.lower() == 'p':
+                    if curr_piece.islower(): promotion_reward = y * 10
+                    else: promotion_reward = (7 - y) * 10
+                    if curr_piece.islower(): evaluation = promotion_reward
+                    else: evaluation -= promotion_reward
+
+                    # simulating endgame
+                    if curr_piece.lower() == 'k' and active_pieces <= 10:
+                        endgame_reward = (4 - max(abs(4 - x), abs(4 - y))) * 10
+                        if curr_piece.islower(): evaluation += endgame_reward
+                        else: evaluation -= endgame_reward
+                    # promotion case
+                    if curr_piece.lower() == 'p':
+                        if curr_piece.islower(): promotion_reward = y * 5
+                        else: promotion_reward = (7 - y) * 5
+                        if curr_piece.islower(): evaluation += promotion_reward
+                        else: evaluation -= promotion_reward
 
         return evaluation
 
