@@ -249,8 +249,23 @@ class AI:
             arr.append([y,x,move[0],move[1],mk])
         return arr
 
+    def _is_isolated_pawn(self, gametiles, x, y):
+    # Checks if the pawn at (x, y) is isolated
+        left_tile_empty = (x == 0 or not gametiles[y][x-1].pieceonTile \
+            or gametiles[y][x-1].pieceonTile.tostring().lower() != 'p')
+        right_tile_empty = (x == 7 or not gametiles[y][x+1].pieceonTile \
+            or gametiles[y][x+1].pieceonTile.tostring().lower() != 'p')
+        return left_tile_empty and right_tile_empty
 
-    def calculateb(self,gametiles):
+    def _check_doubled_pawn(self, gametiles, x, y):
+        # Checks if there is a pawn in the same column below the pawn at (x, y)
+        for i in range(y + 1, 8):
+            if gametiles[i][x].pieceonTile and \
+            gametiles[i][x].pieceonTile.tostring().lower() == 'p': return True
+        return False
+
+
+    def calculateb(self, gametiles):
         '''
         every piece has a different value based on the state
         of the board. The higher the value the more utility
@@ -341,6 +356,7 @@ class AI:
         'p': (100, pawn), 'n': (350, knight), 'b': (350, bishop),
         'r': (525, rook), 'q': (1000, queen), 'k': (10000, king)
         }
+        
         # possible directions for a piece to move in
         possible_directions = [(-1, -1), (-1, 0), (-1, 1), (0, -1), 
                                (0, 1), (1, -1), (1, 0), (1, 1)]
@@ -428,6 +444,17 @@ class AI:
                         else: promotion_reward = (7 - y) * 5
                         if curr_piece.islower(): evaluation += promotion_reward
                         else: evaluation -= promotion_reward
+                
+                # positional understanding from pawn activity perspective
+                if curr_piece.lower() == 'p':
+                    # Penalize isolated pawns
+                    if self._is_isolated_pawn(gametiles, x, y):
+                        if curr_piece.islower(): value -= 50
+                        else: evaluation += 50
+                    # Penalize doubled pawns
+                    if self._check_doubled_pawn(gametiles, x, y):
+                        if curr_piece.islower(): evaluation -= 30
+                        else: evaluation += 50
 
         return evaluation
 
