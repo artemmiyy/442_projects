@@ -386,6 +386,20 @@ class AI:
                 elif curr_piece.isupper() and curr_piece == 'k':
                     king_position = (x, y)
 
+                # get king safety
+                if curr_piece.lower() == 'k':
+                    # Check for pawn protection in front of the king
+                    for dy in [-1, 0, 1]:
+                        new_y = y + dy
+                        if new_y not in range(8):
+                            continue
+                        
+                        tile_piece = gametiles[new_y][x].pieceonTile
+                        if not tile_piece or tile_piece.tostring().lower() != 'p':
+                            if curr_piece.islower():
+                                evaluation -= 200
+                            else: evaluation += 100
+
                 # encouraging attacking squares next to king
                 if king_position != None:
                     king_p1 = king_position[0]
