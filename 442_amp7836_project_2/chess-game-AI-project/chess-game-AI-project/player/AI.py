@@ -272,58 +272,60 @@ class AI:
         we get in a current state. This may not be the most
         effective way to approach to capture each piece's
         utility it but I couldn't figure anything else out.
+        They are basic evaluation tables called piece-square
+        table.
         '''
         king = [
+            [-4, -5, -5, -6, -6, -5, -5, -4],
+            [-4, -5, -5, -6, -6, -5, -5, -4],
+            [-4, -5, -5, -6, -6, -5, -5, -4],
+            [-4, -5, -5, -6, -6, -5, -5, -4],
             [-3, -4, -4, -5, -5, -4, -4, -3],
-            [-3, -4, -4, -5, -5, -4, -4, -3],
-            [-3, -4, -4, -5, -5, -4, -4, -3],
-            [-3, -4, -4, -5, -5, -4, -4, -3],
-            [-2, -3, -3, -4, -4, -3, -3, -2],
-            [-1, -2, -2, -2, -2, -2, -2, -1],
-            [2, 2, 0, 0, 0, 0, 2, 2],
-            [2, 3, 1, 0, 0, 1, 3, 2]
+            [-2, -3, -3, -3, -3, -3, -3, -2],
+            [2, 3, 0, 0, 0, 0, 3, 2],
+            [4, 5, 2, 1, 1, 2, 5, 4]
         ]
 
         queen = [
             [-2, -1, -1, -0.5, -0.5, -1, -1, -2],
             [-1, 0, 0, 0, 0, 0, 0, -1],
-            [-1, 0, 0.5, 0.5, 0.5, 0.5, 0, -1],
-            [-0.5, 0, 0.5, 0.5, 0.5, 0.5, 0, -0.5],
-            [0, 0, 0.5, 0.5, 0.5, 0.5, 0, -0.5],
-            [-1, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -1],
-            [-1, 0, 0.5, 0, 0, 0, 0, -1],
+            [-1, 0, 0.5, 0.75, 0.75, 0.5, 0, -1],
+            [-0.5, 0, 0.75, 1, 1, 0.75, 0, -0.5],
+            [-0.5, 0, 0.75, 1, 1, 0.75, 0, -0.5],
+            [-1, 0, 0.5, 0.75, 0.75, 0.5, 0, -1],
+            [-1, 0, 0, 0.5, 0.5, 0, 0, -1],
             [-2, -1, -1, -0.5, -0.5, -1, -1, -2]
         ]
 
         rook = [
             [0, 0, 0, 0, 0, 0, 0, 0],
             [0.5, 1, 1, 1, 1, 1, 1, 0.5],
+            [0, 0, 0, 0.5, 0.5, 0, 0, 0],
+            [0, 0, 0, 0.5, 0.5, 0, 0, 0],
+            [0, 0, 0, 0.5, 0.5, 0, 0, 0],
+            [0, 0, 0, 0.5, 0.5, 0, 0, 0],
             [-0.5, 0, 0, 0, 0, 0, 0, -0.5],
-            [-0.5, 0, 0, 0, 0, 0, 0, -0.5],
-            [-0.5, 0, 0, 0, 0, 0, 0, -0.5],
-            [-0.5, 0, 0, 0, 0, 0, 0, -0.5],
-            [-0.5, 0, 0, 0, 0, 0, 0, -0.5],
-            [0, 0, 0, 0.5, 0.5, 0, 0, 0]
+            [0, 0, 0, 0.75, 0.75, 0, 0, 0]
         ]
 
         bishop = [
             [-2, -1, -1, -1, -1, -1, -1, -2],
             [-1, 0, 0, 0, 0, 0, 0, -1],
-            [-1, 0, 0.5, 1, 1, 0.5, 0, -1],
-            [-1, 0.5, 0.5, 1, 1, 0.5, 0.5, -1],
-            [-1, 0, 1, 1, 1, 1, 0, -1],
-            [-1, 1, 1, 1, 1, 1, 1, -1],
-            [-1, 0.5, 0, 0, 0, 0, 0.5, -1],
+            [-1, 0, 0.5, 0.75, 0.75, 0.5, 0, -1],
+            [-1, 0.5, 0.75, 1, 1, 0.75, 0.5, -1],
+            [-1, 0.5, 1, 1, 1, 1, 0.5, -1],
+            [-1, 0.75, 1, 1, 1, 1, 0.75, -1],
+            [-1, 0, 0.5, 0, 0, 0.5, 0, -1],
             [-2, -1, -1, -1, -1, -1, -1, -2]
         ]
 
         knight = [
             [-5, -4, -3, -3, -3, -3, -4, -5],
-            [-4, -2, 0, 0, 0, 0, -2, -4],
+            [-4, -2, 0, 0.5, 0.5, 0, -2, -4],
             [-3, 0, 1, 1.5, 1.5, 1, 0, -3],
             [-3, 0.5, 1.5, 2, 2, 1.5, 0.5, -3],
-            [-3, 0, 1.5, 2, 2, 1.5, 0, -3],
-            [-3, 0.5, 1, 1.5, 1.5, 1, 0.5, -3],
+            [-3, 0.5, 1.5, 2, 2, 1.5, 0.5, -3],
+            [-3, 0, 1, 1.5, 1.5, 1, 0, -3],
             [-4, -2, 0, 0.5, 0.5, 0, -2, -4],
             [-5, -4, -3, -3, -3, -3, -4, -5]
         ]
@@ -332,10 +334,10 @@ class AI:
             [0, 0, 0, 0, 0, 0, 0, 0],
             [5, 5, 5, 5, 5, 5, 5, 5],
             [1, 1, 2, 3, 3, 2, 1, 1],
-            [0.5, 0.5, 1, 2.5, 2.5, 1, 0.5, 0.5],
-            [0, 0, 0, 2, 2, 0, 0, 0],
-            [0.5, -0.5, -1, 0, 0, -1, -0.5, 0.5],
-            [0.5, 1, 1, -2, -2, 1, 1, 0.5],
+            [0.5, 1, 1.5, 2.5, 2.5, 1.5, 1, 0.5],
+            [0, 0.5, 1, 2, 2, 1, 0.5, 0],
+            [0.5, 0, 0, 0, 0, 0, 0, 0.5],
+            [0.5, 1, 1, -1, -1, 1, 1, 0.5],
             [0, 0, 0, 0, 0, 0, 0, 0]
         ]
         
@@ -347,16 +349,17 @@ class AI:
         # central squares hold the most significance
         # reward for having control of the central squares
         center = [(3, 3), (3, 4), (4, 3), (4, 4)]
-        center_bonus = 1000
+        center_bonus = 1200
         
         # each piece has a relative value depending on the position
+        # made bishop slightly better than knight
         piece_values = {
-        'P': (-100, pawn), 'N': (-350, knight), 'B': (-350, bishop),
-        'R': (-525, rook), 'Q': (-1000, queen), 'K': (-10000, king),
-        'p': (100, pawn), 'n': (350, knight), 'b': (350, bishop),
-        'r': (525, rook), 'q': (1000, queen), 'k': (10000, king)
+        'P': (-100, pawn), 'N': (-350, knight), 'B': (-375, bishop),
+        'R': (-525, rook), 'Q': (-1200, queen), 'K': (-10000, king),
+        'p': (100, pawn), 'n': (350, knight), 'b': (375, bishop),
+        'r': (525, rook), 'q': (1200, queen), 'k': (10000, king)
         }
-        
+
         # possible directions for a piece to move in
         possible_directions = [(-1, -1), (-1, 0), (-1, 1), (0, -1), 
                                (0, 1), (1, -1), (1, 0), (1, 1)]
@@ -381,10 +384,9 @@ class AI:
                                 adj_piece = adj_square.pieceonTile.tostring()
                                 # reward attack
                                 if curr_piece.islower() != adj_piece.islower():
-                                    value += 22
+                                    evaluation += 25
                                 # reward defense
-                                else:
-                                    value += 18
+                                else: evaluation += 16
                     
                     # center reward
                     if (x, y) in center:
@@ -393,8 +395,8 @@ class AI:
                 
                 # center reward
                 if (x, y) in {(4, 4), (4, 3), (3, 4), (3, 3)}:
-                    if curr_piece.islower(): value += 20
-                    else: value -= 20
+                    if curr_piece.islower(): evaluation += 25
+                    else: evaluation -= 25
                 
                 # get king position
                 if curr_piece.islower() and curr_piece == 'K':
@@ -407,13 +409,11 @@ class AI:
                     # Check for pawn protection in front of the king
                     for dy in [-1, 0, 1]:
                         new_y = y + dy
-                        if new_y not in range(8):
-                            continue
+                        if new_y not in range(8): continue
                         
                         tile_piece = gametiles[new_y][x].pieceonTile
                         if not tile_piece or tile_piece.tostring().lower() != 'p':
-                            if curr_piece.islower():
-                                evaluation -= 200
+                            if curr_piece.islower(): evaluation -= 220
                             else: evaluation += 100
 
                 # encouraging attacking squares next to king
@@ -423,8 +423,8 @@ class AI:
                     king_zone = max(abs(king_p1 - x), abs(king_p2 - y))
                     
                     if king_zone == 1:
-                        if curr_piece.islower(): evaluation += 50
-                        else: evaluation -= 50
+                        if curr_piece.islower(): evaluation += 75
+                        else: evaluation -= 75
                 
                 # encouraging promotion
                 if curr_piece.lower() == 'p':
@@ -449,12 +449,12 @@ class AI:
                 if curr_piece.lower() == 'p':
                     # Penalize isolated pawns
                     if self._is_isolated_pawn(gametiles, x, y):
-                        if curr_piece.islower(): value -= 50
-                        else: evaluation += 50
+                        if curr_piece.islower(): evaluation -= 70
+                        else: evaluation += 70
                     # Penalize doubled pawns
                     if self._check_doubled_pawn(gametiles, x, y):
-                        if curr_piece.islower(): evaluation -= 30
-                        else: evaluation += 50
+                        if curr_piece.islower(): evaluation -= 40
+                        else: evaluation += 60
 
         return evaluation
 
