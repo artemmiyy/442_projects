@@ -384,7 +384,7 @@ class AI:
                                 adj_piece = adj_square.pieceonTile.tostring()
                                 # reward attack
                                 if curr_piece.islower() != adj_piece.islower():
-                                    evaluation += 25
+                                    evaluation += 24
                                 # reward defense
                                 else: evaluation += 16
                     
@@ -423,8 +423,8 @@ class AI:
                     king_zone = max(abs(king_p1 - x), abs(king_p2 - y))
                     
                     if king_zone == 1:
-                        if curr_piece.islower(): evaluation += 75
-                        else: evaluation -= 75
+                        if curr_piece.islower(): evaluation += 60
+                        else: evaluation -= 60
                 
                 # encouraging promotion
                 if curr_piece.lower() == 'p':
@@ -449,8 +449,8 @@ class AI:
                 if curr_piece.lower() == 'p':
                     # Penalize isolated pawns
                     if self._is_isolated_pawn(gametiles, x, y):
-                        if curr_piece.islower(): evaluation -= 70
-                        else: evaluation += 70
+                        if curr_piece.islower(): evaluation -= 62
+                        else: evaluation += 62
                     # Penalize doubled pawns
                     if self._check_doubled_pawn(gametiles, x, y):
                         if curr_piece.islower(): evaluation -= 40
