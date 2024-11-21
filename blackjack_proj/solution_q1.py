@@ -18,7 +18,7 @@ exp_discount = exp_val / (episodes / 3)
 
 # blackjack player class
 class BlackJackBeast:
-	def __init__(self, discount, rate,  exp_val, exp_terminal, exp_discount):
+	def __init__(self, discount, rate, exp_val, exp_terminal, exp_discount):
 		self.discount = discount
 		self.rate = rate
 		self.exp_val = exp_val
@@ -27,13 +27,14 @@ class BlackJackBeast:
 		# initialize and populate the table with zeros
 		self.q_table = defaultdict(lambda: np.zeros(env.action_space.n))
 	
-	# function to get temporal difference error
-	def get_temp_error(self, reward, next_value, action, observed_state):
+	# private method to get temporal difference error
+	def __get_temp_error(self, reward, next_value, action, observed_state):
 		temp_error = reward + self.discount * next_value
 		temp_error -= self.q_table[observed_state][action]
 		return temp_error
 	
-	def update_table(self, observed_state, action, temp_error):
+	# private method to update q table
+	def __update_q_table(self, observed_state, action, temp_error):
 		self.q_table[observed_state][action] = self.rate * temp_error
 		self.q_table[observed_state][action] += self.q_table[observed_state][action]
 
@@ -42,10 +43,10 @@ class BlackJackBeast:
 		else: next_value = np.max(self.q_table[next_observation])
 
 		# temporal difference error
-		temp_error = self.get_temp_error(reward, next_value, action, observed_state)
+		temp_error = self.__get_temp_error(reward, next_value, action, observed_state)
 
 		# update the table
-		self.update_table(observed_state, action, temp_error)
+		self.__update_q_table(observed_state, action, temp_error)
 	
 	# slows down exploration
 	def slow_down_exp(self):
@@ -57,5 +58,22 @@ class BlackJackBeast:
 		if self.exp_val > np.random.random(): return env.action_space.sample()
 		return int(np.argmax(self.q_table[observed_state]))
 
-BlackJackFein = BlackJackBeast()
+if __name__ == "__main__":
+	# initialize the agent
+	BlackJackFein = BlackJackBeast(discount, rate, exp_val, exp_terminal, exp_discount)
+	env = gym.wrappers.RecordEpisodeStatistics(env, episodes)
+
+	for e in range(episodes):
+		game_ended = False
+		observation, info = env.reset()
+
+		while not game_ended:
+			decision = BlackJackFein.decision(observation)
+			new_observation, reward, terminated, truncated, info = env.step(decision)
+			BlackJackFein.update_qval(observation, decision, reward, terminated, new_observation)
+			observation = new_observation
+			game_ended = truncated or terminated
+		
+		BlackJackFein.slow_down_exp()
+
 ### Q-Learning End
