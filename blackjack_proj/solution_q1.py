@@ -50,7 +50,7 @@ class BlackJackBeast:
 	
 	# slows down exploration
 	def slow_down_exp(self):
-		new_exp_val = self.exp_value - exp_discount
+		new_exp_val = self.exp_val - exp_discount
 		self.exp_val = max(self.exp_terminal, new_exp_val)
 
 	# player decision
