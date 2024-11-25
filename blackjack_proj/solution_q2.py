@@ -74,3 +74,4 @@ if __name__ == "__main__":
 	transitions = np.zeros((env.observation_space.n, env.action_space.n, env.observation_space.n))
 	rewards = np.zeros((env.observation_space.n, env.action_space.n, env.observation_space.n))
 	
+	random_policy = RandomPolicy(actions, transitions, rewards)
