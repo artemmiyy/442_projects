@@ -3,18 +3,6 @@ import numpy as np
 from collections import defaultdict
 
 # initializing the environment
-env = gym.make('Blackjack-v1', natural = False, sab = False, render_mode = "human")
-
-### Q-Learning Code
-# initializing the parameters
-episodes = 1000000
-discount = 0.9
-rate = 0.001
-
-# initializing the exploration values
-exp_val = 1
-exp_terminal = 0.1
-exp_discount = exp_val / (episodes / 3)
 
 # blackjack player class
 class BlackJackBeast:
@@ -59,9 +47,23 @@ class BlackJackBeast:
 		return int(np.argmax(self.q_table[observed_state]))
 
 if __name__ == "__main__":
+	# initialize the environment
+	env = gym.make('Blackjack-v1', natural = False, sab = False, render_mode = "human")
+
+	# initializing the parameters
+	episodes = 1000000
+	discount = 0.9
+	rate = 0.001
+
+	# initializing the exploration values
+	exp_val = 1
+	exp_terminal = 0.1
+	exp_discount = exp_val / (episodes / 3)
+
 	# initialize the agent
 	BlackJackFein = BlackJackBeast(discount, rate, exp_val, exp_terminal, exp_discount)
 	env = gym.wrappers.RecordEpisodeStatistics(env, episodes)
+	wins, losses = 0, 0
 
 	for e in range(episodes):
 		game_ended = False
@@ -73,7 +75,13 @@ if __name__ == "__main__":
 			BlackJackFein.update_qval(observation, decision, reward, terminated, new_observation)
 			observation = new_observation
 			game_ended = truncated or terminated
+
+		if reward == 1:
+			print("Bot won")
+			wins += 1
 		
 		BlackJackFein.slow_down_exp()
+	
+	print("The win rate is: " + str(wins / episodes))
 
 ### Q-Learning End
