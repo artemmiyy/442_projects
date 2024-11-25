@@ -51,7 +51,7 @@ if __name__ == "__main__":
 	env = gym.make('Blackjack-v1', natural = False, sab = False, render_mode = "human")
 
 	# initializing the parameters
-	episodes = 1000000
+	episodes = 1000
 	discount = 0.9
 	rate = 0.001
 
@@ -79,6 +79,7 @@ if __name__ == "__main__":
 		if reward == 1:
 			print("Bot won")
 			wins += 1
+		else: print ("Bot lost")
 		
 		BlackJackFein.slow_down_exp()
 	
