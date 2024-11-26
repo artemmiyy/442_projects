@@ -95,24 +95,10 @@ class ValueIteration:
 		# rewrite this
 		print("Policy Extraction Staged")
 		for s in range(self.env.observation_space.n):
-			max_action_value = float('-inf')
-			best_action = None
-
-			for action in range(self.env.action_space.n):
-				action_value = 0
-				for s_prime in range(self.env.observation_space.n):
-					action_value += (
-						self.transition_probs[s, action, s_prime] *
-						(self.expected_rewards[s, action, s_prime] +
-						self.gamma * self.space[s_prime])
-					)
-				
-				if action_value > max_action_value:
-					max_action_value = action_value
-					best_action = action
-			
-			self.policy[s] = best_action
-
+			self.policy[s] = np.argmax([sum([self.transition_probs[s, a, s_prime] * \
+				(self.expected_rewards[s, a, s_prime] + self.gamma * self.space[s_prime]) \
+					for s_prime in range(self.env.observation_space.n)]) \
+						for a in range(self.env.action_space.n)])
 		print("Policy Extraction Completed.")
 		return self.policy
 
