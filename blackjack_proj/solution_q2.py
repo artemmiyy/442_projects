@@ -8,8 +8,6 @@ class RandomPolicy:
 		self.actions = actions
 		self.transitions = transitions
 		self.rewards = rewards
-		self.reward = None
-		self.state = None
 		self.next_state = None
 		self.next_state_status = None
 		self.state_status = None
@@ -20,21 +18,21 @@ class RandomPolicy:
 	
 	def run_RP(self):
 		for episode in range(self.episodes):
-			self.state = self.env.reset()[0]
+			state = self.env.reset()[0]
 			finished = False
 			while not finished:
 				# random action
 				self.action = self.env.action_space.sample()
-				self.next_state, self.reward, finished, truncated, info = self.env.step(self.action)
+				self.next_state, reward, finished, truncated, info = self.env.step(self.action)
 				
 				# get state, action, and update transitions and rewards
 				self.action_status = int(self.action)
-				self.state_status = int(self.state)
+				self.state_status = int(state)
 				self.next_state_status = int(self.next_state)
 				self.transitions[self.state_status, self.action_status, self.next_state_status] += 1
-				self.rewards[self.state_status, self.action_status, self.next_state_status] += self.reward
+				self.rewards[self.state_status, self.action_status, self.next_state_status] += reward
 
-				self.state = self.next_state
+				state = self.next_state
 		
 		positive_transitions = 0 < self.transitions
 		print("Q2.2, Positive Transitions: ", self.transitions[positive_transitions])
@@ -57,15 +55,15 @@ class RandomPolicy:
 # Your code for Q2.3 which implements Value Iteration
 class ValueIteration:
 	def __init__(self, env, transition_probs, expected_rewards):
-		self.policy = np.zeros(env.observation_space.n, dtype = int)
-		self.space = np.zeros(env.observation_space.n)
+		self.env = env
+		self.policy = np.zeros(self.env.observation_space.n, dtype = int)
+		self.space = np.zeros(self.env.observation_space.n)
 		# parameters
 		self.convergence = 1e-3
 		self.gamma = 0.97
 		self.total_iterations = 1000
 		self.transition_probs = transition_probs
 		self.expected_rewards = expected_rewards
-		self.env = env
 
 	def run_VI(self):
 		for iter in range(self.total_iterations):
@@ -74,7 +72,7 @@ class ValueIteration:
 				curr_space = self.space[sp]
 				# rewrite  this
 				self.space[sp] = max([sum([self.transition_probs[sp, a, s_prime] *
-                        (self.expected_rewards[sp, a, s_prime] + self.convergence * self.space[s_prime])
+                        (self.expected_rewards[sp, a, s_prime] + self.gamma * self.space[s_prime])
                          for s_prime in range(self.env.observation_space.n)])
                     for a in range(self.env.action_space.n)])
 				new_convergence = abs(curr_space - self.space[sp])
@@ -146,7 +144,7 @@ if __name__ == "__main__":
 
 	# Q2.4
 	# commented out because execute_policy runs it
-	policy = value_iteration.run_policy_extraction(env)
+	policy = value_iteration.run_policy_extraction()
 
 	# 2.5
-	value_iteration.execute_policy(env, policy, 1000, 'human')
+	value_iteration.execute_policy(policy, 1000, 'human')
