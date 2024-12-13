@@ -45,7 +45,7 @@ if __name__ == "__main__":
   def compute_p_y_given_x1_x2(x1, x2, p_y, p_x1_given_y, p_x2_given_y):
     y_values = list(p_y.keys())
     
-    # Compute numerators for each y value
+    # find numerators for each y value
     numerators = {
         y_val: p_y[y_val] * 
                p_x1_given_y[y_val].get(x1, 0.0) * 
@@ -55,7 +55,7 @@ if __name__ == "__main__":
 
     denominator = sum(numerators.values())
 
-    # Compute conditional probabilities
+    # find conditional probabilities
     if denominator == 0: return {y_val: 1 / len(y_values) for y_val in y_values}
     return {y_val: num / denominator for y_val, num in numerators.items()}
   
@@ -90,7 +90,7 @@ if __name__ == "__main__":
         x2 = row['bloodpressure']
         p_cond = compute_p_y_given_x1_x2(x1, x2, p_y, p_x1_given_y, p_x2_given_y)
 
-        # Extract the probabilities
+        # get the probabilities
         p_y0 = p_cond.get(0, 0.0)
         p_y1 = p_cond.get(1, 0.0)
         predicted_y = int(p_y1 > p_y0)
