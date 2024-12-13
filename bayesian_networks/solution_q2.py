@@ -2,6 +2,7 @@ from sklearn.model_selection import train_test_split
 import pandas as pd
 
 # read the dataframe
+# change this for testing/grading
 diabetes_df = pd.read_csv("/Users/artemmiyy/Desktop/442_projects/bayesian_networks/Naive-Bayes-Classification-Data.csv")
 
 # stratified split (70% train, 30% test)
