@@ -1,15 +1,42 @@
-# Question 1: Implementing Variable Elimination for Inference in Bayes Nets
+# Define probabilities
+burglary_probs = {True: 0.001, False: 0.999}
+earthquake_probs = {True: 0.002, False: 0.998}
 
-# provided probabilies
-
-P_of_B = {True: 0.001, False: 0.999}
-P_of_E = {True: 0.002, False: 0.998}
-
-P_of_A_given_BE = {
-    (True, True): 0.95, 
+alarm_cond = {
+    (True, True): 0.95,
     (True, False): 0.94,
     (False, True): 0.29,
     (False, False): 0.001
 }
 
-P_of_J_given_A = {True: 0.9, False: 0.05}
+john_cond = {True: 0.9, False: 0.05}
+mary_cond = {True: 0.7, False: 0.01}
+
+# We need P(B | J) = P(B, J) / P(J).
+
+# unction to compute the joint probability for given states of B, E, A
+def joint_probability(b, e, a):
+    return (burglary_probs[b] *
+            earthquake_probs[e] *
+            alarm_cond[(b, e)] *
+            john_cond[a])  # John calls depends on Alarm state 'a'
+
+# Compute P(J=True) = sum over all B, E, A of P(B, E, A, J=True)
+p_j_true = sum(
+    joint_probability(b, e, a)
+    for b in [True, False]
+    for e in [True, False]
+    for a in [True, False]
+)
+
+# Compute P(B=True, J=True) = sum over E, A of P(B=True, E, A, J=True)
+p_b_true_j_true = sum(
+    joint_probability(True, e, a)
+    for e in [True, False]
+    for a in [True, False]
+)
+
+# P(B=True | J=True)
+p_b_given_j = p_b_true_j_true / p_j_true
+
+print("P(B | J = +j) =", p_b_given_j)
