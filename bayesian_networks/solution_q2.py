@@ -12,6 +12,8 @@ diabetes_train, diabetes_test = train_test_split(diabetes_df, test_size = 0.3,
 
 
 if __name__ == "__main__":
+  print("Q2, Author: Artemii Polshcha")
+  print("----------------------------")
   # Question 2.1
   # 2.1.1
   p_y = diabetes_train['diabetes'].value_counts(normalize = True).to_dict()
