@@ -17,7 +17,7 @@ mary_cond = {True: 0.7, False: 0.01}
 if __name__ == "__main__":
     print("Q1, Author: Artemii Polshcha")
     print("----------------------------")
-    # find the joint probability for given states of B, E, A
+    # find the joint probability for B, E, A
     def joint_probability(b, e, a):
         return (burglary_probs[b] *
                 earthquake_probs[e] *
@@ -38,7 +38,6 @@ if __name__ == "__main__":
         for a in [True, False]
     )
 
-    # P(B=True | J=True)
     p_b_given_j = p_b_true_j_true / p_j_true
 
     print("P(B | J = +j) =", p_b_given_j)
