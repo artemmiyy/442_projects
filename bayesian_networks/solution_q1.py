@@ -40,4 +40,7 @@ if __name__ == "__main__":
 
     p_b_given_j = p_b_true_j_true / p_j_true
 
+    # test
     print("P(B | J = +j) =", p_b_given_j)
+    # print out the network here
+    
