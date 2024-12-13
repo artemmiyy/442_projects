@@ -40,25 +40,21 @@ if __name__ == "__main__":
   # Question 2.2
   # P(Y | X1, X2)
   def compute_p_y_given_x1_x2(x1, x2, p_y, p_x1_given_y, p_x2_given_y):
-    y_values = p_y.keys()
+    y_values = list(p_y.keys())
     
-    # numerator and denominator
-    numerators = dict()
-    for y_val in y_values:
-        # P(X1|Y=y_val)
-        p_x1 = p_x1_given_y[y_val].get(x1, 0.0)
-        # P(X2|Y=y_val)
-        p_x2 = p_x2_given_y[y_val].get(x2, 0.0)
-        
-        numerators[y_val] = p_y[y_val] * p_x1 * p_x2
+    # Compute numerators for each y value
+    numerators = {
+        y_val: p_y[y_val] * 
+               p_x1_given_y[y_val].get(x1, 0.0) * 
+               p_x2_given_y[y_val].get(x2, 0.0)
+        for y_val in y_values
+    }
 
     denominator = sum(numerators.values())
 
+    # Compute conditional probabilities
     if denominator == 0: return {y_val: 1 / len(y_values) for y_val in y_values}
-
-    # Compute conditional probability for each y
-    p_y_given_x1_x2 = {y_val: num / denominator for y_val, num in numerators.items()}
-    return p_y_given_x1_x2
+    return {y_val: num / denominator for y_val, num in numerators.items()}
   
   results = list()
   for i, row in diabetes_test.iterrows():
@@ -78,4 +74,47 @@ if __name__ == "__main__":
 
   predictions = pd.DataFrame(results)
   print("Question 2.2")
+  print("Lookup Table:")
   print(predictions)
+  print()
+
+  # Question 2.3
+  def predict_diabetes(test_df, p_y, p_x1_given_y, p_x2_given_y):
+    results = list()
+
+    for i, row in test_df.iterrows():
+        x1 = row['glucose']
+        x2 = row['bloodpressure']
+        p_cond = compute_p_y_given_x1_x2(x1, x2, p_y, p_x1_given_y, p_x2_given_y)
+
+        # Extract the probabilities
+        p_y0 = p_cond.get(0, 0.0)
+        p_y1 = p_cond.get(1, 0.0)
+        predicted_y = int(p_y1 > p_y0)
+
+        results.append({
+            'glucose': x1,
+            'bloodpressure': x2,
+            'P(Y=0|X1,X2)': p_y0,
+            'P(Y=1|X1,X2)': p_y1,
+            'Predicted Y': predicted_y,
+            'Actual Y': row['diabetes']
+        })
+
+    return pd.DataFrame(results)
+  
+  predicted_df = predict_diabetes(diabetes_test, p_y, p_x1_given_y, p_x2_given_y)
+  print("Question 2.3")
+  print(predicted_df)
+  print()
+
+  def get_accuracy(predicted):
+    correct_predictions = (predicted['Predicted Y'] == predicted['Actual Y']).sum()
+    total_predictions = len(predicted)
+    accuracy = correct_predictions / total_predictions if total_predictions > 0 else 0
+    return accuracy
+  
+  accuracy = get_accuracy(predicted_df)
+  print("Question 2.3.2")
+  print("Accuracy:", accuracy)
+  
