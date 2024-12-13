@@ -12,31 +12,33 @@ alarm_cond = {
 john_cond = {True: 0.9, False: 0.05}
 mary_cond = {True: 0.7, False: 0.01}
 
-# We need P(B | J) = P(B, J) / P(J).
+# need P(B | J) = P(B, J) / P(J)
 
-# unction to compute the joint probability for given states of B, E, A
-def joint_probability(b, e, a):
-    return (burglary_probs[b] *
-            earthquake_probs[e] *
-            alarm_cond[(b, e)] *
-            john_cond[a])  # John calls depends on Alarm state 'a'
+if __name__ == "__main__":
+    print("Q1, Author: Artemii Polshcha")
+    print("----------------------------")
+    # find the joint probability for given states of B, E, A
+    def joint_probability(b, e, a):
+        return (burglary_probs[b] *
+                earthquake_probs[e] *
+                alarm_cond[(b, e)] *
+                john_cond[a])
 
-# Compute P(J=True) = sum over all B, E, A of P(B, E, A, J=True)
-p_j_true = sum(
-    joint_probability(b, e, a)
-    for b in [True, False]
-    for e in [True, False]
-    for a in [True, False]
-)
+    # find P(J = +j)
+    p_j_true = sum(
+        joint_probability(b, e, a)
+        for b in [True, False]
+        for e in [True, False]
+        for a in [True, False]
+    )
 
-# Compute P(B=True, J=True) = sum over E, A of P(B=True, E, A, J=True)
-p_b_true_j_true = sum(
-    joint_probability(True, e, a)
-    for e in [True, False]
-    for a in [True, False]
-)
+    p_b_true_j_true = sum(
+        joint_probability(True, e, a)
+        for e in [True, False]
+        for a in [True, False]
+    )
 
-# P(B=True | J=True)
-p_b_given_j = p_b_true_j_true / p_j_true
+    # P(B=True | J=True)
+    p_b_given_j = p_b_true_j_true / p_j_true
 
-print("P(B | J = +j) =", p_b_given_j)
+    print("P(B | J = +j) =", p_b_given_j)
